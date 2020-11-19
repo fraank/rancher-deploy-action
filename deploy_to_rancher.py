@@ -16,11 +16,11 @@ class DeployRancher:
         self.rancher_workload_url_api = ''
 
     def deploy(self):
-        rp = requests.get('{}/projects'.format(self.rancher_url_api), auth=(self.access_key, self.secret_key))
+        rp = requests.get('{}/projects'.format(self.rancher_url_api), auth=(self.access_key, self.secret_key), verify=False)
         projects = rp.json()
         for p in projects['data']:
             w_url = '{}/projects/{}/workloads'.format(self.rancher_url_api, p['id'])
-            rw = requests.get(w_url, auth=(self.access_key, self.secret_key))
+            rw = requests.get(w_url, auth=(self.access_key, self.secret_key), verify=False)
             workload = rw.json()
             for w in workload['data']:
                 if w['name'] == self.service_name:
@@ -32,7 +32,7 @@ class DeployRancher:
                 break
 
         rget = requests.get(self.rancher_deployment_path,
-                            auth=(self.access_key, self.secret_key))
+                            auth=(self.access_key, self.secret_key), verify=False)
         response = rget.json()
         if 'status' in response and response['status'] == 404:
             config = {
@@ -46,12 +46,12 @@ class DeployRancher:
             }
 
             requests.post(self.rancher_workload_url_api,
-                          json=config, auth=(self.access_key, self.secret_key))
+                          json=config, auth=(self.access_key, self.secret_key), verify=False)
         else:
             response['containers'][0]['image'] = self.docker_image
 
             requests.put(self.rancher_deployment_path + '?action=redeploy',
-                         json=response, auth=(self.access_key, self.secret_key))
+                         json=response, auth=(self.access_key, self.secret_key), verify=False)
         sys.exit(0)
 
 
