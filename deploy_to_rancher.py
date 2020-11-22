@@ -49,9 +49,8 @@ class DeployRancher:
                           json=config, auth=(self.access_key, self.secret_key), verify=False)
         else:
             response['containers'][0]['image'] = self.docker_image
-
-            requests.put(self.rancher_deployment_path + '?action=redeploy',
-                         json=response, auth=(self.access_key, self.secret_key), verify=False)
+            requests.post(self.rancher_deployment_path + '?action=redeploy',
+                         data={}, auth=(self.access_key, self.secret_key), verify=False)
         sys.exit(0)
 
 
